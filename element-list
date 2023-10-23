@@ -23,6 +23,7 @@ net.mcreator.element.converter.v2022_3
 net.mcreator.element.converter.v2023_1
 net.mcreator.element.converter.v2023_2
 net.mcreator.element.converter.v2023_3
+net.mcreator.element.converter.v2023_4
 net.mcreator.element.parts
 net.mcreator.element.parts.gui
 net.mcreator.element.parts.procedure
@@ -65,6 +66,7 @@ net.mcreator.ui.blockly
 net.mcreator.ui.browser
 net.mcreator.ui.browser.action
 net.mcreator.ui.component
+net.mcreator.ui.component.entries
 net.mcreator.ui.component.filebrowser
 net.mcreator.ui.component.tree
 net.mcreator.ui.component.util
