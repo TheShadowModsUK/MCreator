@@ -139,8 +139,17 @@ public class TreeUtils {
 
 		// If the node matches the predicate, expand it
 		if (predicate.test(node)) {
-			TreePath path = getPath(node);
-			tree.expandPath(path);
+			List<Object> nodes = new ArrayList<>();
+			TreeNode treeNode = node;
+			nodes.add(treeNode);
+			treeNode = treeNode.getParent();
+			while (treeNode != null) {
+				nodes.addFirst(treeNode);
+				treeNode = treeNode.getParent();
+			}
+
+			nodes.removeLast();
+			tree.expandPath(nodes.isEmpty() ? null : new TreePath(nodes.toArray()));
 		}
 
 		// Recurse into children
@@ -149,6 +158,36 @@ public class TreeUtils {
 			DefaultMutableTreeNode child = (DefaultMutableTreeNode) node.getChildAt(i);
 			expandMatchingNodesRecursively(tree, child, predicate);
 		}
+	}
+
+	public static <T> void selectNodeByUserObject(JTree tree, Predicate<T> predicate, Class<T> clazz) {
+		DefaultMutableTreeNode root = (DefaultMutableTreeNode) tree.getModel().getRoot();
+		TreePath path = findPathByUserObject(root, predicate, clazz);
+
+		if (path != null) {
+			tree.setSelectionPath(path);
+			tree.scrollPathToVisible(path);
+		}
+	}
+
+	public static <T> TreePath findPathByUserObject(DefaultMutableTreeNode node, Predicate<T> predicate,
+			Class<T> clazz) {
+		// Check children first to avoid selecting a parent prematurely
+		for (int i = 0; i < node.getChildCount(); i++) {
+			DefaultMutableTreeNode child = (DefaultMutableTreeNode) node.getChildAt(i);
+			TreePath childPath = findPathByUserObject(child, predicate, clazz);
+			if (childPath != null) {
+				return childPath; // Return the first matching child path
+			}
+		}
+
+		// Only check the current node after all children
+		Object userObject = node.getUserObject();
+		if (clazz.isInstance(userObject) && predicate.test(clazz.cast(userObject))) {
+			return new TreePath(node.getPath());
+		}
+
+		return null; // No match found
 	}
 
 }
